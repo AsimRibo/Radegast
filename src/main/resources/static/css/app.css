@@ -1,0 +1,58 @@
+body {
+    min-height: 100vh;
+    background-color: #EEF1EF;
+    color: #1C2321;
+}
+
+.app-navbar {
+    background-color: #A9B4C2;
+    border-bottom: 1px solid #7D98A1;
+}
+
+.registration-card {
+    max-width: 640px;
+    padding: 2rem;
+    background-color: white;
+    border: 1px solid #A9B4C2;
+    border-radius: 8px;
+}
+
+.section-label {
+    color: #5E6572;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.app-primary-button {
+    color: white;
+    background-color: #5E6572;
+    border-color: #5E6572;
+}
+
+.app-primary-button:hover {
+    color: white;
+    background-color: #1C2321;
+    border-color: #1C2321;
+}
+
+.app-secondary-button {
+    color: #1C2321;
+    background-color: transparent;
+    border-color: #7D98A1;
+}
+
+.app-secondary-button:hover {
+    color: white;
+    background-color: #7D98A1;
+    border-color: #7D98A1;
+}
+
+.success-card {
+    max-width: 520px;
+}
+
+.success-icon {
+    margin: auto;
+    width: 55px;
+    height: 55px;
+}

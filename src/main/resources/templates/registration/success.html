@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration complete</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<nav class="navbar app-navbar">
+    <div class="container">
+        <span class="navbar-brand fw-semibold mb-0">
+            Radegast
+        </span>
+    </div>
+</nav>
+<main class="container py-5">
+    <div class="success-card mx-auto text-center">
+        <img th:src="@{/images/check-mark.svg}"
+                class="success-icon mb-3"
+                alt="Registration successful">
+
+        <h1 class="h3 mb-3">
+            Registration complete
+        </h1>
+
+        <p class="text-secondary mb-4">
+            Your account was created successfully and is now active.
+        </p>
+
+        <a th:href="@{/login}" class="btn app-secondary-button">
+            Continue to sign in
+        </a>
+    </div>
+</main>
+</body>
+</html>

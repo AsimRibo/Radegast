@@ -42,3 +42,9 @@ jobs:
 
       - name: Run Maven build
         run: ./mvnw --batch-mode --no-transfer-progress clean verify
+
+      - name: Validate compose config
+        run: docker compose config --quiet
+
+      - name: Build application image
+        run: docker compose build app

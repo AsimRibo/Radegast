@@ -53,7 +53,7 @@ jobs:
 
       - name: Prepare image name and tag
         run: |
-          echo "IMAGE_NAME=${REGISTRY}/${GITHUB_REPOSITORY,,} >> "$GITHUB_ENV"
+          echo "IMAGE_NAME=${REGISTRY}/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
 
       - name: Log in to GHCR

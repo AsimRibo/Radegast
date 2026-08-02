@@ -108,7 +108,7 @@ public class UserRegistrationServiceTest {
                         InvalidRegistrationRoleException.class
                 )
                 .hasMessage(
-                        "Submitted role is not available for you."
+                        "Wrong message."
                 );
 
         verifyNoInteractions(

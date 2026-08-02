@@ -64,7 +64,7 @@ public class AdminUserController {
 
         redirectAttributes.addFlashAttribute(
                 "successMessage",
-                "The user account with ID " + userId + " has been deactivated."
+                "The user account with ID: " + userId + " has been deactivated."
         );
 
         return "redirect:/admin/users/" + userId;

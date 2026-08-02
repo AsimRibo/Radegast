@@ -13,3 +13,22 @@ CREATE TABLE IF not EXISTS app_users
                              'TEACHER',
                              'ADMIN'))
     );
+
+INSERT INTO app_users
+    (
+        email,
+        password_hash,
+        first_name,
+        last_name,
+        ROLE,
+        active
+    )
+VALUES
+    (
+     'admin@radegast.com',
+     '$2a$10$0zJQX.4sm5g0FI2VB0O31u0xqKJOdzhJ/lFDUkvM.K9u5ICvjAQY2', -- password
+     'Radegast',
+     'Administrator',
+     'ADMIN',
+     TRUE
+    );

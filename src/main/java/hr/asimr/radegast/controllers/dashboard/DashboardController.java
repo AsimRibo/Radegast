@@ -21,7 +21,7 @@ public class DashboardController {
         }
 
         if (hasAuthority(authentication, "ROLE_ADMIN")) {
-            return "redirect:/admin/dashboard";
+            return "redirect:/admin/users";
         }
 
         throw new AccessDeniedException(

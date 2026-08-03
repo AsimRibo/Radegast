@@ -85,12 +85,15 @@
                         <th scope="col">
                             Enrollment
                         </th>
+                        <th scope="col">
+                            Actions
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(courses)}">
                         <td class="text-center text-muted py-4"
-                            th:attr="colspan=${showTeacherColumn ? 6 : 5}">
+                            th:attr="colspan=${showTeacherColumn ? 7 : 6}">
                             No courses have been created yet.
                         </td>
                     </tr>
@@ -143,6 +146,34 @@
                                   class="badge text-bg-secondary">
                                 Closed
                             </span>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a th:if="${course.status.name() != 'ARCHIVED'}"
+                                   class="btn btn-sm app-secondary-button"
+                                   th:href="@{/courses/{id}/edit(id=${course.id})}">
+                                    Edit
+                                </a>
+                                <form th:if="${course.status.name() == 'DRAFT'}"
+                                      method="post"
+                                      th:action="@{/courses/{id}/activate(id=${course.id})}"
+                                      class="mb-0">
+                                    <button type="submit"
+                                            class="btn btn-sm app-primary-button">
+                                        Activate
+                                    </button>
+                                </form>
+
+                                <form th:if="${course.status.name() == 'ACTIVE'}"
+                                      method="post"
+                                      th:action="@{/courses/{id}/deactivate(id=${course.id})}"
+                                      class="mb-0">
+                                    <button type="submit"
+                                            class="btn btn-sm app-secondary-button">
+                                        Return to draft
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     </tbody>

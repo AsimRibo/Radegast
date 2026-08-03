@@ -102,6 +102,31 @@ public class CourseService {
         course.setEnrollmentOpen(courseForm.isEnrollmentOpen());
     }
 
+    @Transactional
+    public void activateCourse(Long courseId, String authenticatedUserEmail) {
+        AppUser currentUser = findUserByEmail(authenticatedUserEmail);
+        Course course = findManageableCourse(courseId, currentUser);
+
+        if (course.getStatus() != CourseStatus.DRAFT) {
+            throw new InvalidCourseStatusException("Only draft courses can be activated.");
+        }
+
+        course.setStatus(CourseStatus.ACTIVE);
+    }
+
+    @Transactional
+    public void deactivateCourse(Long courseId, String authenticatedUserEmail) {
+        AppUser currentUser = findUserByEmail(authenticatedUserEmail);
+        Course course = findManageableCourse(courseId, currentUser);
+
+        if (course.getStatus() != CourseStatus.ACTIVE) {
+            throw new InvalidCourseStatusException("Only active courses can be returned to draft.");
+        }
+
+        course.setStatus(CourseStatus.DRAFT);
+        course.setEnrollmentOpen(false);
+    }
+
     private Course findManageableCourse(Long courseId, AppUser currentUser) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new CourseNotFoundException(courseId));

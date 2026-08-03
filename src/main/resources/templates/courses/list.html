@@ -154,6 +154,25 @@
                                    th:href="@{/courses/{id}/edit(id=${course.id})}">
                                     Edit
                                 </a>
+                                <form th:if="${course.status.name() == 'DRAFT'}"
+                                      method="post"
+                                      th:action="@{/courses/{id}/activate(id=${course.id})}"
+                                      class="mb-0">
+                                    <button type="submit"
+                                            class="btn btn-sm app-primary-button">
+                                        Activate
+                                    </button>
+                                </form>
+
+                                <form th:if="${course.status.name() == 'ACTIVE'}"
+                                      method="post"
+                                      th:action="@{/courses/{id}/deactivate(id=${course.id})}"
+                                      class="mb-0">
+                                    <button type="submit"
+                                            class="btn btn-sm app-secondary-button">
+                                        Return to draft
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

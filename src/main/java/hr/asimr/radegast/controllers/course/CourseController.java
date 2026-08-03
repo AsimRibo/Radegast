@@ -146,6 +146,20 @@ public class CourseController {
         return "redirect:/courses";
     }
 
+    @PostMapping("/{courseId}/activate")
+    public String activateCourse(@PathVariable Long courseId, Authentication authentication) {
+        courseService.activateCourse(courseId, authentication.getName());
+
+        return "redirect:/courses";
+    }
+
+    @PostMapping("/{courseId}/deactivate")
+    public String deactivateCourse(@PathVariable Long courseId, Authentication authentication) {
+        courseService.deactivateCourse(courseId, authentication.getName());
+
+        return "redirect:/courses";
+    }
+
     private void addEditCourseFormAttributes(
             Model model,
             Long courseId

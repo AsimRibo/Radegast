@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Users</title>
@@ -15,10 +15,15 @@
             <span class="navbar-brand fw-semibold mb-0">
                 Radegast
             </span>
-            <a sec:authorize="hasRole('ADMIN')"
+            <a sec:authorize="hasAuthority('ROLE_ADMIN')"
                class="nav-link app-link"
                th:href="@{/admin/users}">
                 Manage users
+            </a>
+            <a sec:authorize="hasAnyAuthority('ROLE_TEACHER', 'ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/courses}">
+                Courses
             </a>
         </div>
         <form method="post"

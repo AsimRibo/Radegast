@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${formTitle}"></title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<nav class="navbar app-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-4">
+            <span class="navbar-brand fw-semibold mb-0">
+                Radegast
+            </span>
+            <a sec:authorize="hasAuthority('ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/admin/users}">
+                Manage users
+            </a>
+            <a sec:authorize="hasAnyAuthority('ROLE_TEACHER', 'ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/courses}">
+                Courses
+            </a>
+        </div>
+        <form method="post"
+              th:action="@{/logout}"
+              class="mb-0">
+            <button type="submit"
+                    class="btn btn-sm app-secondary-button">
+                Log out
+            </button>
+        </form>
+    </div>
+</nav>
+<main class="container py-5">
+    <div class="card app-content-card admin-user-card mx-auto">
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <p class="section-label mb-1">
+                    COURSE MANAGEMENT
+                </p>
+                <h1 class="h3 mb-2"
+                    th:text="${formTitle}">
+                </h1>
+                <p class="text-muted mb-0">
+                    Enter the basic course information.
+                </p>
+            </div>
+            <form th:action="${formAction}"
+                  th:object="${courseForm}"
+                  method="post"
+                  novalidate>
+                <div class="mb-3">
+                    <label for="code" class="form-label">
+                        Course code
+                    </label>
+                    <input id="code"
+                           type="text"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('code')} ? 'is-invalid'"
+                           th:field="*{code}"
+                           maxlength="30"
+                           autocomplete="off">
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('code')}"
+                         th:errors="*{code}">
+                    </div>
+                    <div class="form-text">
+                        The code must be unique and will be stored in uppercase.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">
+                        Course name
+                    </label>
+                    <input id="name"
+                           type="text"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                           th:field="*{name}"
+                           maxlength="150">
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('name')}"
+                         th:errors="*{name}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">
+                        Description
+                    </label>
+                    <textarea id="description"
+                              class="form-control"
+                              th:field="*{description}"
+                              rows="5">
+                    </textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="capacity" class="form-label">
+                        Capacity
+                    </label>
+                    <input id="capacity"
+                           type="number"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('capacity')} ? 'is-invalid'"
+                           th:field="*{capacity}"
+                           min="1">
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('capacity')}"
+                         th:errors="*{capacity}">
+                    </div>
+                    <div class="form-text">
+                        Leave empty if the course has no capacity limit.
+                    </div>
+                </div>
+                <div class="form-check mb-4">
+                    <input id="enrollmentOpen"
+                           type="checkbox"
+                           class="form-check-input"
+                           th:field="*{enrollmentOpen}">
+                    <label for="enrollmentOpen" class="form-check-label">
+                        Enrollment open
+                    </label>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit"
+                            class="btn app-primary-button"
+                            th:text="${submitLabel}">
+                    </button>
+                    <a class="btn app-secondary-button" th:href="@{/courses}">
+                        Back to courses
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

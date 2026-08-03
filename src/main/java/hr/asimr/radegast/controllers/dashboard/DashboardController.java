@@ -17,7 +17,7 @@ public class DashboardController {
         }
 
         if (hasAuthority(authentication, "ROLE_TEACHER")) {
-            return "redirect:/teacher/dashboard";
+            return "redirect:/courses";
         }
 
         if (hasAuthority(authentication, "ROLE_ADMIN")) {

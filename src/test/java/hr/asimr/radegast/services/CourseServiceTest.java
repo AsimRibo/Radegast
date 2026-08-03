@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -134,6 +134,37 @@ public class CourseServiceTest {
         );
     }
 
+    @Test
+    void assignedTeacherCanArchiveActiveCourse() {
+        AppUser teacher = createUser(
+                1L,
+                TEACHER_EMAIL,
+                Role.TEACHER
+        );
+        Course course = createCourse(
+                10L,
+                CourseStatus.ACTIVE,
+                teacher
+        );
+        course.setEnrollmentOpen(true);
+
+        when(appUserRepository.findByEmailIgnoreCase(TEACHER_EMAIL))
+                .thenReturn(Optional.of(teacher));
+        when(courseRepository.findById(10L))
+                .thenReturn(Optional.of(course));
+
+        courseService.archiveCourse(
+                10L,
+                TEACHER_EMAIL
+        );
+
+        assertEquals(
+                CourseStatus.ARCHIVED,
+                course.getStatus()
+        );
+        assertFalse(course.isEnrollmentOpen());
+    }
+
     private CourseFormDto createValidFormDto() {
         CourseFormDto form = new CourseFormDto();
         form.setCode("CS101");
@@ -168,6 +199,21 @@ public class CourseServiceTest {
         course.setName("Course " + code);
         course.setTeacher(teacher);
         course.setStatus(CourseStatus.DRAFT);
+        course.setEnrollmentOpen(true);
+        return course;
+    }
+
+    private Course createCourse(
+            Long id,
+            CourseStatus status,
+            AppUser teacher
+    ) {
+        Course course = new Course();
+        course.setId(id);
+        course.setCode("C1");
+        course.setName("Course C1");
+        course.setTeacher(teacher);
+        course.setStatus(status);
         course.setEnrollmentOpen(true);
         return course;
     }

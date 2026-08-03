@@ -173,6 +173,15 @@
                                         Return to draft
                                     </button>
                                 </form>
+                                <form th:if="${course.status.name() != 'ARCHIVED'}"
+                                      method="post"
+                                      th:action="@{/courses/{id}/archive(id=${course.id})}"
+                                      class="mb-0">
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger">
+                                        Archive
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

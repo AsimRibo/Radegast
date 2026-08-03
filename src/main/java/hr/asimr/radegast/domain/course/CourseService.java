@@ -127,6 +127,19 @@ public class CourseService {
         course.setEnrollmentOpen(false);
     }
 
+    @Transactional
+    public void archiveCourse(Long courseId, String authenticatedUserEmail) {
+        AppUser currentUser = findUserByEmail(authenticatedUserEmail);
+        Course course = findManageableCourse(courseId, currentUser);
+
+        if (course.getStatus() == CourseStatus.ARCHIVED) {
+            throw new InvalidCourseStatusException("The course is already archived.");
+        }
+
+        course.setStatus(CourseStatus.ARCHIVED);
+        course.setEnrollmentOpen(false);
+    }
+
     private Course findManageableCourse(Long courseId, AppUser currentUser) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new CourseNotFoundException(courseId));

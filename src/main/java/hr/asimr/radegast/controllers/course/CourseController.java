@@ -96,6 +96,16 @@ public class CourseController {
         return "redirect:/courses";
     }
 
+    @PostMapping("/{courseId}/archive")
+    public String archiveCourse(
+            @PathVariable Long courseId,
+            Authentication authentication
+    ) {
+        courseService.archiveCourse(courseId, authentication.getName());
+
+        return "redirect:/courses";
+    }
+
     @GetMapping("/{courseId}/edit")
     public String showEditCourseForm(@PathVariable Long courseId, Authentication authentication, Model model) {
         model.addAttribute(

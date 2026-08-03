@@ -14,4 +14,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findAllByTeacher_IdOrderByCreatedAtDesc(
             Long teacherId
     );
+
+    boolean existsByCodeAndIdNot(String code, Long id);
 }

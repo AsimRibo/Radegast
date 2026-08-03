@@ -29,9 +29,7 @@ public class CourseService {
 
             case TEACHER -> courseRepository.findAllByTeacher_IdOrderByCreatedAtDesc(currentUser.getId());
 
-            case STUDENT -> throw new AccessDeniedException(
-                    "Students cannot access course management."
-            );
+            case STUDENT -> throw new AccessDeniedException("Students cannot access course management.");
         };
 
         return courses
@@ -64,6 +62,71 @@ public class CourseService {
         course.setStatus(CourseStatus.DRAFT);
 
         return courseRepository.save(course);
+    }
+
+    public CourseFormDto getCourseForEditing(Long courseId, String authenticatedUserEmail
+    ) {
+        AppUser currentUser = findUserByEmail(authenticatedUserEmail);
+        Course course = findManageableCourse(courseId, currentUser);
+
+        ensureCourseCanBeEdited(course);
+
+        CourseFormDto courseForm = new CourseFormDto();
+        courseForm.setCode(course.getCode());
+        courseForm.setName(course.getName());
+        courseForm.setDescription(course.getDescription());
+        courseForm.setCapacity(course.getCapacity());
+        courseForm.setEnrollmentOpen(course.isEnrollmentOpen());
+
+        return courseForm;
+    }
+
+    @Transactional
+    public void updateCourse(Long courseId, CourseFormDto courseForm, String authenticatedUserEmail) {
+        AppUser currentUser = findUserByEmail(authenticatedUserEmail);
+        Course course = findManageableCourse(courseId, currentUser);
+
+        ensureCourseCanBeEdited(course);
+
+        String normalizedCode = normalizeCode(courseForm.getCode());
+
+        if (courseRepository.existsByCodeAndIdNot(normalizedCode, courseId
+        )) {
+            throw new CourseCodeAlreadyExistsException(normalizedCode);
+        }
+
+        course.setCode(normalizedCode);
+        course.setName(courseForm.getName().trim());
+        course.setDescription(normalizeDescription(courseForm.getDescription()));
+        course.setCapacity(courseForm.getCapacity());
+        course.setEnrollmentOpen(courseForm.isEnrollmentOpen());
+    }
+
+    private Course findManageableCourse(Long courseId, AppUser currentUser) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
+
+        boolean administrator = currentUser.getRole() == Role.ADMIN;
+
+        boolean assignedTeacher =
+                currentUser.getRole() == Role.TEACHER
+                && course.getTeacher() != null
+                && course.getTeacher()
+                        .getId()
+                        .equals(currentUser.getId());
+
+        if (!administrator && !assignedTeacher) {
+            throw new AccessDeniedException("You cannot manage this course.");
+        }
+
+        return course;
+    }
+
+
+    private void ensureCourseCanBeEdited(Course course) {
+        if (course.getStatus() == CourseStatus.ARCHIVED) {
+            throw new InvalidCourseStatusException("Archived courses cannot be edited.");
+        }
     }
 
     private AppUser findUserByEmail(String email) {

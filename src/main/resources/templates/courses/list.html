@@ -85,12 +85,15 @@
                         <th scope="col">
                             Enrollment
                         </th>
+                        <th scope="col">
+                            Actions
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(courses)}">
                         <td class="text-center text-muted py-4"
-                            th:attr="colspan=${showTeacherColumn ? 6 : 5}">
+                            th:attr="colspan=${showTeacherColumn ? 7 : 6}">
                             No courses have been created yet.
                         </td>
                     </tr>
@@ -142,6 +145,20 @@
                             <span th:unless="${course.enrollmentOpen}"
                                   class="badge text-bg-secondary">
                                 Closed
+                            </span>
+                        </td>
+                        <td>
+                            <form th:if="${course.status.name() != 'ARCHIVED'}"
+                                  method="post"
+                                  th:action="@{/courses/{id}/archive(id=${course.id})}"
+                                  class="mb-0">
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger">
+                                    Archive
+                                </button>
+                            </form>
+                            <span th:if="${course.status.name() == 'ARCHIVED'}" class="text-muted">
+                                No actions
                             </span>
                         </td>
                     </tr>

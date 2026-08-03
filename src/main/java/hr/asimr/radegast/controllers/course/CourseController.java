@@ -9,10 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -95,6 +92,20 @@ public class CourseController {
                 "successMessage",
                 "Course created successfully."
         );
+
+        return "redirect:/courses";
+    }
+
+    @PostMapping("/{courseId}/archive")
+    public String archiveCourse(
+            @PathVariable Long courseId,
+            Authentication authentication
+    ) {
+        // TODO add service logic for archiving
+//        courseService.archiveCourse(
+//                courseId,
+//                authentication.getName()
+//        );
 
         return "redirect:/courses";
     }

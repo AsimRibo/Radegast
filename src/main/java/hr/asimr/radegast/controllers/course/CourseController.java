@@ -101,11 +101,7 @@ public class CourseController {
             @PathVariable Long courseId,
             Authentication authentication
     ) {
-        // TODO add service logic for archiving
-//        courseService.archiveCourse(
-//                courseId,
-//                authentication.getName()
-//        );
+        courseService.archiveCourse(courseId, authentication.getName());
 
         return "redirect:/courses";
     }

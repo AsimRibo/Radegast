@@ -31,5 +31,5 @@ public class CourseFormDto {
     @Positive(message = "Capacity must be greater than zero.")
     private Integer capacity;
 
-    private boolean enrollmentOpen = true;
+    private boolean enrollmentOpen = false;
 }

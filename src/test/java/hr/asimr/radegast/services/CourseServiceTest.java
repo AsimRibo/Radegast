@@ -8,6 +8,7 @@ import hr.asimr.radegast.data.repositories.AppUserRepository;
 import hr.asimr.radegast.data.repositories.CourseRepository;
 import hr.asimr.radegast.domain.course.CourseFormDto;
 import hr.asimr.radegast.domain.course.CourseService;
+import hr.asimr.radegast.domain.course.InvalidCourseStatusException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -101,6 +103,35 @@ public class CourseServiceTest {
                 .findAllByTeacher_IdOrderByCreatedAtDesc(
                         any()
                 );
+    }
+
+    @Test
+    void draftCourseCannotBeDeactivated() {
+        AppUser teacher = createUser(
+                1L,
+                TEACHER_EMAIL,
+                Role.TEACHER
+        );
+
+        Course course = createCourse(
+                10L,
+                "C1",
+                teacher
+        );
+
+        when(appUserRepository.findByEmailIgnoreCase(TEACHER_EMAIL))
+                .thenReturn(Optional.of(teacher));
+
+        when(courseRepository.findById(10L))
+                .thenReturn(Optional.of(course));
+
+        assertThrows(
+                InvalidCourseStatusException.class,
+                () -> courseService.deactivateCourse(
+                        10L,
+                        TEACHER_EMAIL
+                )
+        );
     }
 
     private CourseFormDto createValidFormDto() {

@@ -110,6 +110,93 @@ public class CourseController {
         return "redirect:/courses";
     }
 
+    @GetMapping("/{courseId}/edit")
+    public String showEditCourseForm(@PathVariable Long courseId, Authentication authentication, Model model) {
+        model.addAttribute(
+                COURSE_FORM_ATTRIBUTE,
+                courseService.getCourseForEditing(courseId, authentication.getName())
+        );
+
+        addCourseFormAttributes(
+                model,
+                "Edit course",
+                "/courses/" + courseId + "/edit",
+                "Save changes"
+        );
+
+        return COURSE_FORM_VIEW;
+    }
+
+    @PostMapping("/{courseId}/edit")
+    public String updateCourse(
+            @PathVariable Long courseId,
+            @Valid
+            @ModelAttribute("courseForm")
+            CourseFormDto courseForm,
+            BindingResult bindingResult,
+            Authentication authentication,
+            Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            addEditCourseFormAttributes(model, courseId);
+
+            return COURSE_FORM_VIEW;
+        }
+
+        try {
+            courseService.updateCourse(courseId, courseForm, authentication.getName());
+        } catch (CourseCodeAlreadyExistsException exception) {
+            bindingResult.rejectValue(
+                    "code",
+                    "duplicate",
+                    exception.getMessage()
+            );
+
+            addEditCourseFormAttributes(model, courseId);
+
+            return COURSE_FORM_VIEW;
+        }
+
+        return "redirect:/courses";
+    }
+
+    @PostMapping("/{courseId}/activate")
+    public String activateCourse(@PathVariable Long courseId, Authentication authentication) {
+        courseService.activateCourse(courseId, authentication.getName());
+
+        return "redirect:/courses";
+    }
+
+    @PostMapping("/{courseId}/deactivate")
+    public String deactivateCourse(@PathVariable Long courseId, Authentication authentication) {
+        courseService.deactivateCourse(courseId, authentication.getName());
+
+        return "redirect:/courses";
+    }
+
+    private void addEditCourseFormAttributes(
+            Model model,
+            Long courseId
+    ) {
+        addCourseFormAttributes(
+                model,
+                "Edit course",
+                "/courses/" + courseId + "/edit",
+                "Save changes"
+        );
+    }
+
+    private void addCourseFormAttributes(
+            Model model,
+            String formTitle,
+            String formAction,
+            String submitLabel
+    ) {
+        model.addAttribute("formTitle", formTitle);
+        model.addAttribute("formAction", formAction);
+        model.addAttribute("submitLabel", submitLabel);
+    }
+
     private void addFormAttributes(Model model) {
         model.addAttribute(
                 "formTitle",

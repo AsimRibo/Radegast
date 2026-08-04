@@ -26,7 +26,8 @@ public class SecurityConfig {
                                 "/access-denied",
                                 "/error",
                                 "/css/**",
-                                "/images/**"
+                                "/images/**",
+                                "/actuator/**"
                         ).permitAll()
 
                         // Role-specific pages

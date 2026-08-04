@@ -149,6 +149,10 @@
                         </td>
                         <td>
                             <div class="d-flex flex-wrap gap-2">
+                                <a class="btn btn-sm btn-outline-secondary"
+                                   th:href="@{/courses/{courseId}/sessions(courseId=${course.id})}">
+                                    Sessions
+                                </a>
                                 <a th:if="${course.status.name() != 'ARCHIVED'}"
                                    class="btn btn-sm app-secondary-button"
                                    th:href="@{/courses/{id}/edit(id=${course.id})}">

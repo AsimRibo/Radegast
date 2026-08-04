@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${formTitle}"></title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<nav class="navbar app-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-4">
+            <span class="navbar-brand fw-semibold mb-0">
+                Radegast
+            </span>
+            <a sec:authorize="hasAuthority('ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/admin/users}">
+                Manage users
+            </a>
+            <a sec:authorize="hasAnyAuthority('ROLE_TEACHER', 'ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/courses}">
+                Courses
+            </a>
+        </div>
+        <form method="post"
+              th:action="@{/logout}"
+              class="mb-0">
+            <button type="submit"
+                    class="btn btn-sm app-secondary-button">
+                Log out
+            </button>
+        </form>
+    </div>
+</nav>
+<main class="container py-5">
+    <div class="mb-4">
+        <p class="text-muted mb-1" th:text="${course.code + ' - ' + course.name}">
+        </p>
+        <h1 class="h3 mb-0" th:text="${formTitle}">
+        </h1>
+    </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <form th:action="${formAction}"
+                  th:object="${sessionForm}"
+                  method="post"
+                  novalidate>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label for="startsAt" class="form-label">
+                            Start date and time
+                        </label>
+                        <input id="startsAt"
+                               type="datetime-local"
+                               step="60"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('startsAt')} ? 'is-invalid'"
+                               th:field="*{startsAt}">
+                        <div class="invalid-feedback"
+                             th:if="${#fields.hasErrors('startsAt')}"
+                             th:errors="*{startsAt}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="endsAt" class="form-label">
+                            End date and time
+                        </label>
+                        <input id="endsAt"
+                               type="datetime-local"
+                               step="60"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('endsAt')} ? 'is-invalid'"
+                               th:field="*{endsAt}">
+                        <div class="invalid-feedback"
+                             th:if="${#fields.hasErrors('endsAt')}"
+                             th:errors="*{endsAt}">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="topic" class="form-label">
+                            Topic
+                        </label>
+                        <input id="topic"
+                               type="text"
+                               maxlength="255"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('topic')} ? 'is-invalid'"
+                               th:field="*{topic}">
+                        <div class="form-text">
+                            Optional description of what will be covered.
+                        </div>
+                        <div class="invalid-feedback"
+                             th:if="${#fields.hasErrors('topic')}"
+                             th:errors="*{topic}">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="location" class="form-label">
+                            Location
+                        </label>
+                        <input id="location"
+                               type="text"
+                               maxlength="255"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('location')} ? 'is-invalid'"
+                               th:field="*{location}">
+                        <div class="form-text">
+                            A classroom or another location.
+                        </div>
+                        <div class="invalid-feedback"
+                             th:if="${#fields.hasErrors('location')}"
+                             th:errors="*{location}">
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit"
+                            class="btn app-primary-button"
+                            th:text="${submitLabel}">
+                    </button>
+                    <a class="btn app-secondary-button"
+                       th:href="@{/courses/{courseId}/sessions(courseId=${course.id})}">
+                        Back to sessions
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

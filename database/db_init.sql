@@ -47,3 +47,18 @@ CREATE TABLE courses
     CONSTRAINT chk_courses_status CHECK (status IN ('DRAFT', 'ACTIVE','ARCHIVED')),
     CONSTRAINT chk_courses_capacity CHECK (capacity IS NULL OR capacity > 0)
 );
+
+CREATE TABLE course_sessions
+(
+    id        BIGINT GENERATED always AS IDENTITY PRIMARY KEY,
+    course_id BIGINT NOT NULL,
+    starts_at TIMESTAMP NOT NULL,
+    ends_at   TIMESTAMP NOT NULL,
+    location  VARCHAR(255),
+    topic     VARCHAR(255),
+    cancelled BOOLEAN NOT NULL DEFAULT false,
+    CONSTRAINT fk_course_sessions_course FOREIGN KEY (course_id) REFERENCES
+        courses(id),
+    CONSTRAINT chk_course_sessions_time CHECK (ends_at > starts_at)
+);
+

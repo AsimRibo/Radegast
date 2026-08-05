@@ -62,3 +62,18 @@ CREATE TABLE course_sessions
     CONSTRAINT chk_course_sessions_time CHECK (ends_at > starts_at)
 );
 
+CREATE TABLE enrollments
+(
+    id           BIGINT GENERATED always AS IDENTITY PRIMARY KEY,
+    student_id   BIGINT NOT NULL,
+    course_id    BIGINT NOT NULL,
+    status       VARCHAR(20) NOT NULL DEFAULT 'ENROLLED',
+    enrolled_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP,
+    enrolled_by  BIGINT NOT NULL,
+    CONSTRAINT fk_enrollments_student FOREIGN KEY (student_id) REFERENCES app_users(id),
+    CONSTRAINT fk_enrollments_course FOREIGN KEY (course_id) REFERENCES courses(id),
+    CONSTRAINT fk_enrollments_creator FOREIGN KEY (enrolled_by) REFERENCES app_users(id),
+    CONSTRAINT uq_enrollments_student_course UNIQUE (student_id, course_id),
+    CONSTRAINT chk_enrollments_status CHECK (status IN ('ENROLLED', 'COMPLETED', 'WITHDRAWN'))
+);

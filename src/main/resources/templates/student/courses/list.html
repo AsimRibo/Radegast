@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Courses</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<nav class="navbar app-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-4">
+            <span class="navbar-brand fw-semibold mb-0">
+                Radegast
+            </span>
+            <a sec:authorize="hasAuthority('ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/admin/users}">
+                Manage users
+            </a>
+            <a sec:authorize="hasAnyAuthority('ROLE_TEACHER', 'ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/courses}">
+                Courses
+            </a>
+            <a sec:authorize="hasAuthority('ROLE_STUDENT')"
+               th:href="@{/student/courses}"
+               class="app-link">
+                Courses
+            </a>
+        </div>
+        <form method="post"
+              th:action="@{/logout}"
+              class="mb-0">
+            <button type="submit"
+                    class="btn btn-sm app-secondary-button">
+                Log out
+            </button>
+        </form>
+    </div>
+</nav>
+<main class="container py-4">
+    <section class="app-content-card p-4">
+        <div class="mb-4">
+            <p class="section-label mb-1">Student courses</p>
+            <h1 class="h3 mb-2">Available courses</h1>
+            <p class="text-muted mb-0">
+                Enrol in an available course or manage your current enrolments.
+            </p>
+        </div>
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">
+        </div>
+        <div th:if="${#lists.isEmpty(courses)}" class="app-info-alert">
+            No active courses are currently available.
+        </div>
+        <div th:unless="${#lists.isEmpty(courses)}" class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Course</th>
+                    <th>Teacher</th>
+                    <th>Capacity</th>
+                    <th>Availability</th>
+                    <th>Enrolment</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="course : ${courses}">
+                    <td th:text="${course.code}"></td>
+                    <td>
+                        <strong th:text="${course.name}"></strong>
+                        <div th:if="${course.description != null and !course.description.isBlank()}"
+                             class="small text-muted mt-1"
+                             th:text="${course.description}">
+                        </div>
+                    </td>
+                    <td th:text="${course.teacherName}"></td>
+                    <td>
+                        <span th:if="${course.capacity == null}" th:text="${course.enrolledCount + ' enrolled'}">
+                        </span>
+                        <span th:if="${course.capacity != null}"
+                              th:text="${course.enrolledCount + ' / ' + course.capacity}">
+                        </span>
+                    </td>
+                    <td>
+                        <span th:if="${!course.enrollmentOpen}" class="badge text-bg-secondary">
+                            Closed
+                        </span>
+                        <span th:if="${course.enrollmentOpen and course.full}" class="badge text-bg-danger">
+                            Full
+                        </span>
+                        <span th:if="${course.enrollmentOpen and !course.full}" class="badge text-bg-success">
+                            Open
+                        </span>
+                    </td>
+                    <td>
+                        <span th:if="${course.enrolled}" class="badge text-bg-success">
+                            Enrolled
+                        </span>
+                        <span th:if="${course.withdrawn}" class="badge text-bg-secondary">
+                            Withdrawn
+                        </span>
+                        <span th:if="${course.completed}" class="badge text-bg-primary">
+                            Completed
+                        </span>
+                        <span th:if="${course.enrollmentStatus == null}" class="text-muted">
+                            Not enrolled
+                        </span>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a th:if="${course.enrolled}"
+                               th:href="@{/student/courses/{courseId}/sessions(courseId=${course.id})}"
+                               class="btn btn-sm app-secondary-button">
+                                View sessions
+                            </a>
+                            <form th:if="${course.canWithdraw}"
+                                  method="post"
+                                  th:action="@{/student/courses/{courseId}/withdraw(courseId=${course.id})}"
+                                  class="mb-0">
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger">
+                                    Withdraw
+                                </button>
+                            </form>
+                            <form th:if="${course.canEnroll}"
+                                  method="post"
+                                  th:action="@{/student/courses/{courseId}/enroll(courseId=${course.id})}"
+                                  class="mb-0">
+                                <button type="submit"
+                                        class="btn btn-sm app-primary-button"
+                                        th:text="${course.withdrawn ? 'Re-enrol' : 'Enrol'}">
+                                </button>
+                            </form>
+                            <span th:if="${!course.enrolled
+                                    and !course.completed
+                                    and !course.canEnroll
+                                    and !course.enrollmentOpen}"
+                                  class="text-muted">
+                                Enrolment closed
+                            </span>
+                            <span th:if="${!course.enrolled
+                                    and !course.completed
+                                    and !course.canEnroll
+                                    and course.enrollmentOpen
+                                    and course.full}"
+                                  class="text-muted">
+                                Course full
+                            </span>
+                            <span th:if="${course.completed}" class="text-muted">
+                                No actions
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

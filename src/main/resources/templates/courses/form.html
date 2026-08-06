@@ -25,6 +25,11 @@
                th:href="@{/courses}">
                 Courses
             </a>
+            <a sec:authorize="hasAuthority('ROLE_STUDENT')"
+               th:href="@{/student/courses}"
+               class="app-link">
+                Courses
+            </a>
         </div>
         <form method="post"
               th:action="@{/logout}"

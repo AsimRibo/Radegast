@@ -13,7 +13,7 @@ public class DashboardController {
     public String redirectToRoleDashoard(Authentication authentication) {
 
         if (hasAuthority(authentication, "ROLE_STUDENT")) {
-            return "redirect:/student/dashboard";
+            return "redirect:/student/courses";
         }
 
         if (hasAuthority(authentication, "ROLE_TEACHER")) {

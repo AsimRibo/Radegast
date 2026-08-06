@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${course.name} + 'ernolments'"></title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<nav class="navbar app-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-4">
+            <span class="navbar-brand fw-semibold mb-0">
+                Radegast
+            </span>
+            <a sec:authorize="hasAuthority('ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/admin/users}">
+                Manage users
+            </a>
+            <a sec:authorize="hasAnyAuthority('ROLE_TEACHER', 'ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/courses}">
+                Courses
+            </a>
+            <a sec:authorize="hasAuthority('ROLE_STUDENT')"
+               th:href="@{/student/courses}"
+               class="app-link">
+                Courses
+            </a>
+        </div>
+        <form method="post"
+              th:action="@{/logout}"
+              class="mb-0">
+            <button type="submit"
+                    class="btn btn-sm app-secondary-button">
+                Log out
+            </button>
+        </form>
+    </div>
+</nav>
+<main class="container py-5">
+    <section class="app-content-card p-4">
+        <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+            <div>
+                <p class="section-label mb-1" th:text="${course.code}">
+                </p>
+                <h1 class="h3 mb-2" th:text="${course.name}">
+                </h1>
+                <p class="text-muted mb-1">
+                    Teacher: <span th:text="${course.teacherName}"></span>
+                </p>
+                <p class="text-muted mb-0">
+                    Enrolled students:
+                    <span th:if="${course.capacity == null}" th:text="${course.enrolledCount}"></span>
+                    <span th:if="${course.capacity != null}"
+                          th:text="${course.enrolledCount + ' / ' + course.capacity}">
+                    </span>
+                </p>
+            </div>
+            <a th:href="@{/courses}" class="btn app-secondary-button">
+                Back to courses
+            </a>
+        </div>
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">
+        </div>
+        <div th:if="${course.administrator}" class="mb-4">
+            <h2 class="h5 mb-3">
+                Enrol student
+            </h2>
+            <div th:if="${!course.acceptingEnrollments}" class="app-info-alert">
+                This course is not currently accepting new enrolments.
+            </div>
+            <div th:if="${course.acceptingEnrollments and #lists.isEmpty(course.availableStudents)}"
+                 class="app-info-alert">
+                No active students are currently available for enrolment.
+            </div>
+            <form th:if="${course.acceptingEnrollments and !#lists.isEmpty(course.availableStudents)}"
+                  method="post"
+                  th:action="@{/courses/{courseId}/enrollments/enroll(courseId=${course.id})}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <label for="studentId" class="form-label">
+                            Student
+                        </label>
+                        <select id="studentId" name="studentId" class="form-select" required>
+                            <option value="" selected disabled>
+                                Select a student
+                            </option>
+                            <option th:each="student : ${course.availableStudents}"
+                                    th:value="${student.id}"
+                                    th:text="${student.name + ' (' + student.email + ')'}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn app-primary-button">
+                            Enrol student
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <h2 class="h5 mb-3">
+            Enrolled students
+        </h2>
+        <div th:if="${#lists.isEmpty(course.enrolledStudents)}" class="app-info-alert">
+            No students are currently enrolled in this course.
+        </div>
+        <div th:unless="${#lists.isEmpty(course.enrolledStudents)}" class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Email</th>
+                    <th>Enrolled at</th>
+                    <th th:if="${course.administrator}">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student : ${course.enrolledStudents}">
+                    <td th:text="${student.name}"></td>
+                    <td th:text="${student.email}"></td>
+                    <td th:text="${#temporals.format(student.enrolledAt, 'dd.MM.yyyy HH:mm')}"></td>
+                    <td th:if="${course.administrator}">
+                        <form method="post"
+                              th:action="@{/courses/{courseId}/enrollments/{studentId}/withdraw(courseId=${course.id}, studentId=${student.id})}"
+                              class="mb-0">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Withdraw
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

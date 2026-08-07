@@ -119,6 +119,10 @@
                                class="btn btn-sm btn-outline-secondary">
                                 Assessments
                             </a>
+                            <a th:href="@{/student/courses/{courseId}/grades(courseId=${course.id})}"
+                               class="btn btn-sm btn-outline-primary">
+                                Grades
+                            </a>
                             <a th:if="${course.enrolled}"
                                th:href="@{/student/courses/{courseId}/sessions(courseId=${course.id})}"
                                class="btn btn-sm app-secondary-button">

@@ -94,3 +94,19 @@ CREATE TABLE assessments
     CONSTRAINT chk_assessments_type CHECK (assessment_type IN ('ASSIGNMENT','QUIZ')),
     CONSTRAINT chk_assessments_maximum_score CHECK (maximum_score > 0)
 );
+
+CREATE TABLE grades
+(
+    id            BIGINT GENERATED always AS IDENTITY PRIMARY KEY,
+    assessment_id BIGINT NOT NULL,
+    student_id    BIGINT NOT NULL,
+    score         INTEGER NOT NULL,
+    feedback      TEXT,
+    graded_by     BIGINT NOT NULL,
+    graded_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_grades_assessment FOREIGN KEY (assessment_id) REFERENCES assessments(id),
+    CONSTRAINT fk_grades_student FOREIGN KEY (student_id) REFERENCES app_users(id),
+    CONSTRAINT fk_grades_grader FOREIGN KEY (graded_by) REFERENCES app_users(id),
+    CONSTRAINT uq_grades_assessment_student UNIQUE (assessment_id, student_id),
+    CONSTRAINT chk_grades_score CHECK (score >= 0)
+);

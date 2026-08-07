@@ -24,65 +24,7 @@ public class DashboardController {
             return "redirect:/admin/users";
         }
 
-        throw new AccessDeniedException(
-                "Something went wrong."
-        );
-    }
-
-    @GetMapping("/student/dashboard")
-    public String showStudentDashboard(
-            Authentication authentication,
-            Model model
-    ) {
-        prepareDashboard(
-                model,
-                authentication,
-                "Student dashboard",
-                "View your courses, enrolments, assessments and progress."
-        );
-
-        return "dashboard";
-    }
-
-    @GetMapping("/teacher/dashboard")
-    public String showTeacherDashboard(
-            Authentication authentication,
-            Model model
-    ) {
-        prepareDashboard(
-                model,
-                authentication,
-                "Teacher dashboard",
-                "Manage your courses, assessments, grades and feedback."
-        );
-
-        return "dashboard";
-    }
-
-    @GetMapping("/admin/dashboard")
-    public String showAdminDashboard(
-            Authentication authentication,
-            Model model
-    ) {
-        prepareDashboard(
-                model,
-                authentication,
-                "Administrator dashboard",
-                "Manage users, courses, enrolments and administrative actions."
-        );
-
-        return "dashboard";
-    }
-
-    private void prepareDashboard(
-            Model model,
-            Authentication authentication,
-            String title,
-            String description
-    ) {
-        model.addAttribute("title", title);
-        model.addAttribute("description", description);
-        model.addAttribute("email", authentication.getName());
+        throw new AccessDeniedException("Something went wrong.");
     }
 
     private boolean hasAuthority(
@@ -93,8 +35,7 @@ public class DashboardController {
                 .getAuthorities()
                 .stream()
                 .anyMatch(authority ->
-                        authority.getAuthority()
-                                .equals(requiredAuthority)
+                        authority.getAuthority().equals(requiredAuthority)
                 );
     }
 }

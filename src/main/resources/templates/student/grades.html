@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Grades</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<nav class="navbar app-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-4">
+            <span class="navbar-brand fw-semibold mb-0">
+                Radegast
+            </span>
+            <a sec:authorize="hasAuthority('ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/admin/users}">
+                Manage users
+            </a>
+            <a sec:authorize="hasAnyAuthority('ROLE_TEACHER', 'ROLE_ADMIN')"
+               class="nav-link app-link"
+               th:href="@{/courses}">
+                Courses
+            </a>
+        </div>
+        <form method="post"
+              th:action="@{/logout}"
+              class="mb-0">
+            <button type="submit" class="btn btn-sm app-secondary-button">
+                Log out
+            </button>
+        </form>
+    </div>
+</nav>
+<main class="container py-5">
+    <div class="mb-4">
+        <h1 th:text="${course.name}"></h1>
+        <p class="text-muted">Grades and feedback</p>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Progress</h5>
+            <div th:if="${progress.hasGrades}">
+                <p class="mb-1">
+                    <strong th:text="${progress.earnedScore}"></strong>
+                    /
+                    <strong th:text="${progress.maximumScore}"></strong>
+                </p>
+                <p class="mb-0">
+                    Overall: <strong th:text="${progress.percentage + '%'}"></strong>
+                </p>
+            </div>
+            <p th:unless="${progress.hasGrades}" class="text-muted mb-0">
+                No graded assessments yet.
+            </p>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(grades)}" class="alert alert-secondary">
+        No assessments available.
+    </div>
+    <div class="table-responsive" th:unless="${#lists.isEmpty(grades)}">
+        <table class="table align-middle">
+            <thead>
+            <tr>
+                <th>Assessment</th>
+                <th>Type</th>
+                <th>Due</th>
+                <th>Score</th>
+                <th>Feedback</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="grade : ${grades}">
+                <td th:text="${grade.assessmentTitle}"></td>
+                <td th:text="${grade.assessmentType}"></td>
+                <td th:text="${grade.dueAt != null ? #temporals.format(grade.dueAt, 'dd.MM.yyyy HH:mm') : 'No due date'}">
+                </td>
+                <td>
+                    <span th:if="${grade.score != null}">
+                        <span th:text="${grade.score}"></span>
+                        /
+                        <span th:text="${grade.maximumScore}"></span>
+                    </span>
+
+                    <span th:unless="${grade.score != null}" class="text-muted">
+                        Not graded
+                    </span>
+                </td>
+                <td>
+                    <span th:if="${grade.score != null && grade.feedback != null}" th:text="${grade.feedback}">
+                    </span>
+                    <span th:if="${grade.score != null && grade.feedback == null}" class="text-muted">
+                        No feedback
+                    </span>
+                    <span th:unless="${grade.score != null}" class="text-muted">
+                        /
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a th:href="@{/student/courses}" class="btn btn-secondary">
+        Back to courses
+    </a>
+</main>
+</body>
+</html>

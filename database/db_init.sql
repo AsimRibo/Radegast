@@ -77,3 +77,20 @@ CREATE TABLE enrollments
     CONSTRAINT uq_enrollments_student_course UNIQUE (student_id, course_id),
     CONSTRAINT chk_enrollments_status CHECK (status IN ('ENROLLED', 'COMPLETED', 'WITHDRAWN'))
 );
+
+CREATE TABLE assessments
+(
+    id              BIGINT GENERATED always AS IDENTITY PRIMARY KEY,
+    course_id       BIGINT NOT NULL,
+    title           VARCHAR(200) NOT NULL,
+    description     TEXT,
+    assessment_type VARCHAR(20) NOT NULL,
+    maximum_score   INTEGER NOT NULL,
+    due_at          TIMESTAMP,
+    created_by      BIGINT NOT NULL,
+    created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_assessments_course FOREIGN KEY (course_id) REFERENCES courses(id),
+    CONSTRAINT fk_assessments_creator FOREIGN KEY (created_by) REFERENCES app_users(id),
+    CONSTRAINT chk_assessments_type CHECK (assessment_type IN ('ASSIGNMENT','QUIZ')),
+    CONSTRAINT chk_assessments_maximum_score CHECK (maximum_score > 0)
+);
